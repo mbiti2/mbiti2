@@ -37,7 +37,6 @@ jobs:
             dist/ocean.gif?color_snake=orange&color_dots=#bfd6f6,#8dbdff,#64a1f4,#4b91f1,#3c7dd9
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true
 
       # Step 4: Verify files were generated
       - name: Verify generated files
@@ -55,9 +54,20 @@ jobs:
             exit 1
           fi
 
-      # Step 5: Deploy the generated files to the 'output' branch
+      # Step 5: Debug token
+      - name: Debug Token
+        run: |
+          echo "Checking GH_PAGES_TOKEN..."
+          if [ -z "${{ secrets.GH_PAGES_TOKEN }}" ]; then
+            echo "Error: GH_PAGES_TOKEN is not set"
+            exit 1
+          else
+            echo "GH_PAGES_TOKEN is set"
+          fi
+
+      # Step 6: Deploy the generated files to the 'output' branch
       - name: Deploy to Output Branch
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v3.9.3
         with:
           github_token: ${{ secrets.GH_PAGES_TOKEN }}
           publish_dir: ./dist
